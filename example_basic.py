@@ -12,7 +12,7 @@ def main():
     print("=== Simple Text Completion Example ===\n")
     
     # Simple prompt
-    prompt = "Explain what Ollama is in one sentence."
+    prompt = "Explain the difference between Ollama and Huggingface in one sentence."
     
     print(f"Prompt: {prompt}\n")
     print("Response:")
