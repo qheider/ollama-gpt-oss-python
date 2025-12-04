@@ -135,11 +135,15 @@ class OllamaClient:
         
         for line in response.iter_lines():
             if line:
-                chunk = json.loads(line)
-                if "response" in chunk:
-                    yield chunk["response"]
-                if chunk.get("done", False):
-                    break
+                try:
+                    chunk = json.loads(line)
+                    if "response" in chunk:
+                        yield chunk["response"]
+                    if chunk.get("done", False):
+                        break
+                except json.JSONDecodeError:
+                    # Skip malformed JSON lines
+                    continue
     
     def chat_stream(
         self,
@@ -173,11 +177,15 @@ class OllamaClient:
         
         for line in response.iter_lines():
             if line:
-                chunk = json.loads(line)
-                if "message" in chunk and "content" in chunk["message"]:
-                    yield chunk["message"]["content"]
-                if chunk.get("done", False):
-                    break
+                try:
+                    chunk = json.loads(line)
+                    if "message" in chunk and "content" in chunk["message"]:
+                        yield chunk["message"]["content"]
+                    if chunk.get("done", False):
+                        break
+                except json.JSONDecodeError:
+                    # Skip malformed JSON lines
+                    continue
     
     def list_models(self) -> Dict:
         """
@@ -222,8 +230,12 @@ class OllamaClient:
         result = {}
         for line in response.iter_lines():
             if line:
-                chunk = json.loads(line)
-                result = chunk
-                if chunk.get("done", False):
-                    break
+                try:
+                    chunk = json.loads(line)
+                    result = chunk
+                    if chunk.get("done", False):
+                        break
+                except json.JSONDecodeError:
+                    # Skip malformed JSON lines
+                    continue
         return result
